@@ -12,9 +12,9 @@ static uint16_t adc2_chan_mask = 0;
 static adc_channel_t channel[4] = {ADC_CHANNEL_4, ADC_CHANNEL_5, ADC_CHANNEL_6, ADC_CHANNEL_7}; // GPIO33
 #define DEFAULT_VREF 1100              // Use a tensão de referência padrão em mV
 uint8_t result[TIMES] = {0};            // Buffer to store raw readings
-uint32_t sum_channel_32 = 0, sum_channel_33 = 0;
-uint32_t max_channel_32 = -1, max_channel_33 = -1;
-uint32_t min_channel_32 = 4096, min_channel_33 = 4096;
+uint32_t sum_channel_32, sum_channel_33;
+uint32_t max_channel_32, max_channel_33;
+uint32_t min_channel_32, min_channel_33;
 
 static void continuous_adc_init(uint16_t adc1_chan_mask, uint16_t adc2_chan_mask, adc_channel_t *channel, uint8_t channel_num) {
     adc_digi_init_config_t adc_dma_config = {
@@ -54,8 +54,8 @@ void read_adc_data() {
     esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, DEFAULT_VREF, adc_chars);
      
     adc_digi_read_bytes(result, TIMES, &ret_num, ADC_MAX_DELAY);
-    sum_channel_32 = 0; max_channel_32 = 0; min_channel_32 = 4096;
-    sum_channel_33 = 0; max_channel_33 = 0; min_channel_33 = 4096;
+    sum_channel_32 = 0; max_channel_32 = 0; min_channel_32 = 4096 << 6;
+    sum_channel_33 = 0; max_channel_33 = 0; min_channel_33 = 4096 << 6;
 
     for (int i = 0; i < ret_num; i += ADC_RESULT_BYTE) {
         adc_digi_output_data_t *p = (adc_digi_output_data_t*)&result[i];
